@@ -4,6 +4,7 @@
 	"description": "Terminal Status",
 	"version": "0.0.1",
 	"publisher": "flavienbusseuil",
+	"repository": "https://github.com/FlavienBusseuil/terminus",
 	"engines": {
 		"vscode": "^1.31.1"
 	},
