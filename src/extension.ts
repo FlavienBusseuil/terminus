@@ -33,7 +33,6 @@ const matches = [
 function initializeTerminus(terminal: Terminal, context: ExtensionContext) {
 	const statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left, 0);
 	terminal.processId.then((processId) => {
-		commands.registerCommand(`showTerminal-${processId}`, () => terminal.show());
 		statusBarItem.command = `showTerminal-${processId}`;
 		const terminusId = processId.toString();
 		terminuses[terminusId] = {
@@ -44,7 +43,12 @@ function initializeTerminus(terminal: Terminal, context: ExtensionContext) {
 		};
 		context.subscriptions.push(statusBarItem);
 		statusBarItem.show();
-		displayTerminus(terminusId);
+		commands.registerCommand(`showTerminal-${processId}`, () => {
+			terminuses[terminusId].counts.fill(0);
+			terminal.show();
+			updateTerminusDisplay(terminusId);
+		});
+		updateTerminusDisplay(terminusId);
 		watchTerminus(terminusId);
 	});
 }
@@ -89,7 +93,7 @@ function parse(data: string): number[] {
 	return counts;
 }
 
-function displayTerminus(terminusId: string) {
+function updateTerminusDisplay(terminusId: string) {
 	const { counts, isLoading, terminal, statusBarItem } = terminuses[terminusId];
 	const prefix = `${terminal.name}:`;
 	const body = matches.map(({ display }, i) => `${display} ${counts[i]}`).join("  ");
@@ -107,10 +111,10 @@ function watchTerminus(terminusId: string) {
 		});
 		if (!terminus.isLoading) {
 			terminus.isLoading = true;
-			displayTerminus(terminusId);
+			updateTerminusDisplay(terminusId);
 			setTimeout(() => {
 				terminus.isLoading = false;
-				displayTerminus(terminusId);
+				updateTerminusDisplay(terminusId);
 			}, 500);
 		}
 	});
