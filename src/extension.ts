@@ -23,19 +23,28 @@ const terminuses: {
 } = {};
 
 function initializeTerminus(terminal: Terminal, context: ExtensionContext) {
-	const statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left, 0);
 	terminal.processId.then((processId) => {
-		statusBarItem.command = `showTerminal-${processId}`;
 		const terminusId = processId.toString();
+		const command = `showTerminal-${processId}`;
+		const counts = matches.map(() => 0);
+		// Existing terminus
+		if (terminuses[terminusId]) {
+			terminuses[terminusId].counts = counts;
+			updateTerminusDisplay(terminusId);
+			return;
+		}
+
+		const statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left, 0);
+		statusBarItem.command = command;
 		terminuses[terminusId] = {
-			counts: matches.map(() => 0),
+			counts,
 			isLoading: false,
 			statusBarItem,
 			terminal,
 		};
 		context.subscriptions.push(statusBarItem);
 		statusBarItem.show();
-		commands.registerCommand(`showTerminal-${processId}`, () => {
+		commands.registerCommand(command, () => {
 			terminuses[terminusId].counts.fill(0);
 			terminal.show();
 			updateTerminusDisplay(terminusId);
@@ -128,7 +137,6 @@ export function activate(context: ExtensionContext) {
 	window.onDidOpenTerminal((terminal) => initializeTerminus(terminal, context));
 	window.onDidCloseTerminal((terminal) => releaseTerminus(terminal));
 	workspace.onDidChangeConfiguration(() => {
-		window.terminals.forEach((terminal) => releaseTerminus(terminal));
 		setMatches();
 		window.terminals.forEach((terminal) => initializeTerminus(terminal, context));
 	});
