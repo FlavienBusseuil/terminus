@@ -2,8 +2,9 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import {
-	window,
 	commands,
+	window,
+	workspace,
 	Terminal,
 	ExtensionContext,
 	StatusBarAlignment,
@@ -11,6 +12,7 @@ import {
 } from "vscode";
 
 let currentLine = "";
+let matches: Array<{ expression: string; display: string }>;
 const terminuses: {
 	[key: string]: {
 		terminal: Terminal;
@@ -19,16 +21,6 @@ const terminuses: {
 		isLoading: boolean;
 	};
 } = {};
-const matches = [
-	{
-		display: "⚠️",
-		expression: /[Ww]arning/,
-	},
-	{
-		display: "❌",
-		expression: /[Ee]rror/,
-	},
-];
 
 function initializeTerminus(terminal: Terminal, context: ExtensionContext) {
 	const statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left, 0);
@@ -63,7 +55,7 @@ function releaseTerminus(terminal: Terminal) {
 
 function parse(data: string): number[] {
 	let newCurrentLine = "";
-	const counts = matches.map(({ expression }) => 0);
+	const counts = matches.map(() => 0);
 	if (!data || !data.length) {
 		return counts;
 	}
@@ -80,9 +72,10 @@ function parse(data: string): number[] {
 	}
 
 	matches.forEach(({ expression }, i) => {
+		const regExp = new RegExp(expression);
 		if (
-			lines.find((line) => line.search(expression) !== -1) ||
-			(currentLine.search(expression) === -1 && newCurrentLine.search(expression) !== -1)
+			lines.find((line) => line.search(regExp) !== -1) ||
+			(currentLine.search(regExp) === -1 && newCurrentLine.search(regExp) !== -1)
 		) {
 			counts[i] += 1;
 		}
@@ -104,6 +97,7 @@ function updateTerminusDisplay(terminusId: string) {
 function watchTerminus(terminusId: string) {
 	const terminus = terminuses[terminusId];
 	const { terminal } = terminus;
+	window.onDidCloseTerminal;
 	terminal.onDidWriteData((data: string) => {
 		const counts = parse(data);
 		counts.forEach((count, i) => {
@@ -120,9 +114,19 @@ function watchTerminus(terminusId: string) {
 	});
 }
 
+function setMatches() {
+	matches =
+		workspace
+			.getConfiguration("terminus")
+			.get<Array<{ expression: string; display: string }>>("matches") || [];
+}
+
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: ExtensionContext) {
+	setMatches();
+	workspace.onDidChangeConfiguration(setMatches);
+
 	window.terminals.forEach((terminal) => initializeTerminus(terminal, context));
 	window.onDidOpenTerminal((terminal) => initializeTerminus(terminal, context));
 	window.onDidCloseTerminal((terminal) => releaseTerminus(terminal));

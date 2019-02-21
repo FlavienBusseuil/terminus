@@ -15,6 +15,28 @@
 		"*"
 	],
 	"main": "./out/extension",
+	"contributes": {
+		"configuration": {
+			"type": "object",
+			"title": "Terminus configuration",
+			"properties": {
+				"terminus.matches": {
+					"type": "array",
+					"default": [
+						{
+							"display": "⚠️",
+							"expression": "[Ww]arning"
+						},
+						{
+							"display": "❌",
+							"expression": "[Ee]rror"
+						}
+					],
+					"description": "Specifies the different matches."
+				}
+			}
+		}
+	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
 		"compile": "tsc -p ./",
