@@ -97,7 +97,6 @@ function updateTerminusDisplay(terminusId: string) {
 function watchTerminus(terminusId: string) {
 	const terminus = terminuses[terminusId];
 	const { terminal } = terminus;
-	window.onDidCloseTerminal;
 	terminal.onDidWriteData((data: string) => {
 		const counts = parse(data);
 		counts.forEach((count, i) => {
@@ -125,11 +124,14 @@ function setMatches() {
 // your extension is activated the very first time the command is executed
 export function activate(context: ExtensionContext) {
 	setMatches();
-	workspace.onDidChangeConfiguration(setMatches);
-
 	window.terminals.forEach((terminal) => initializeTerminus(terminal, context));
 	window.onDidOpenTerminal((terminal) => initializeTerminus(terminal, context));
 	window.onDidCloseTerminal((terminal) => releaseTerminus(terminal));
+	workspace.onDidChangeConfiguration(() => {
+		window.terminals.forEach((terminal) => releaseTerminus(terminal));
+		setMatches();
+		window.terminals.forEach((terminal) => initializeTerminus(terminal, context));
+	});
 }
 
 // this method is called when your extension is deactivated
