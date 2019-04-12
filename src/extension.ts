@@ -11,6 +11,7 @@ import {
 	StatusBarItem,
 } from "vscode";
 
+let EXTENTION_CONTEXT: ExtensionContext;
 let currentLine = "";
 let matches: Array<{ expression: string; display: string }>;
 const terminuses: {
@@ -22,7 +23,7 @@ const terminuses: {
 	};
 } = {};
 
-function initializeTerminus(terminal: Terminal, context: ExtensionContext) {
+function initializeTerminusFromTerminal(terminal: Terminal) {
 	terminal.processId.then((processId) => {
 		const terminusId = processId.toString();
 		const command = `showTerminal-${processId}`;
@@ -34,7 +35,8 @@ function initializeTerminus(terminal: Terminal, context: ExtensionContext) {
 			return;
 		}
 
-		const statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left, 0);
+		const terminusPriority = -Object.keys(terminuses).length - 1;
+		const statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left, terminusPriority);
 		statusBarItem.command = command;
 		terminuses[terminusId] = {
 			counts,
@@ -42,7 +44,7 @@ function initializeTerminus(terminal: Terminal, context: ExtensionContext) {
 			statusBarItem,
 			terminal,
 		};
-		context.subscriptions.push(statusBarItem);
+		EXTENTION_CONTEXT.subscriptions.push(statusBarItem);
 		statusBarItem.show();
 		commands.registerCommand(command, () => {
 			terminuses[terminusId].counts.fill(0);
@@ -54,11 +56,21 @@ function initializeTerminus(terminal: Terminal, context: ExtensionContext) {
 	});
 }
 
-function releaseTerminus(terminal: Terminal) {
+function releaseTerminus(processId: string) {
+	terminuses[processId].statusBarItem.dispose();
+	delete terminuses[processId];
+}
+
+function releaseTerminusFromTerminal(terminal: Terminal) {
 	terminal.processId.then((processId) => {
-		const { statusBarItem } = terminuses[processId];
-		statusBarItem.dispose();
-		delete terminuses[processId];
+		if (!terminuses[processId]) {
+			console.error("reload terminus");
+			Object.keys(terminuses).forEach(releaseTerminus);
+			window.terminals.forEach(releaseTerminusFromTerminal);
+			return;
+		}
+
+		releaseTerminus(processId.toString());
 	});
 }
 
@@ -97,10 +109,14 @@ function parse(data: string): number[] {
 
 function updateTerminusDisplay(terminusId: string) {
 	const { counts, isLoading, terminal, statusBarItem } = terminuses[terminusId];
-	const prefix = `${terminal.name}:`;
-	const body = matches.map(({ display }, i) => `${display} ${counts[i]}`).join("  ");
-	const suffix = isLoading ? "⏳" : "";
-	statusBarItem.text = `${prefix} ${body} ${suffix}`;
+	const prefix = `${terminal.name}`;
+	const body = matches
+		.map(({ display }, i) => ({ display, count: counts[i] }))
+		.filter(({ count }) => count > 0)
+		.map(({ display, count }) => `${display} ${count}`)
+		.join(" ");
+	const suffix = isLoading ? "⧖" : "";
+	statusBarItem.text = [prefix, body, suffix].filter((s) => s !== "").join(" ");
 }
 
 function watchTerminus(terminusId: string) {
@@ -132,17 +148,18 @@ function setMatches() {
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: ExtensionContext) {
+	EXTENTION_CONTEXT = context;
 	setMatches();
-	window.terminals.forEach((terminal) => initializeTerminus(terminal, context));
-	window.onDidOpenTerminal((terminal) => initializeTerminus(terminal, context));
-	window.onDidCloseTerminal((terminal) => releaseTerminus(terminal));
+	window.terminals.forEach((terminal) => initializeTerminusFromTerminal(terminal));
+	window.onDidOpenTerminal((terminal) => initializeTerminusFromTerminal(terminal));
+	window.onDidCloseTerminal((terminal) => releaseTerminusFromTerminal(terminal));
 	workspace.onDidChangeConfiguration(() => {
 		setMatches();
-		window.terminals.forEach((terminal) => initializeTerminus(terminal, context));
+		window.terminals.forEach((terminal) => initializeTerminusFromTerminal(terminal));
 	});
 }
 
 // this method is called when your extension is deactivated
 export function deactivate() {
-	window.terminals.forEach((terminal) => releaseTerminus(terminal));
+	window.terminals.forEach((terminal) => releaseTerminusFromTerminal(terminal));
 }
