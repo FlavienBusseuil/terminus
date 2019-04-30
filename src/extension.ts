@@ -47,6 +47,11 @@ function initializeTerminusFromTerminal(terminal: Terminal) {
 		EXTENTION_CONTEXT.subscriptions.push(statusBarItem);
 		statusBarItem.show();
 		commands.registerCommand(command, () => {
+			if (!terminal) {
+				releaseTerminus(terminusId);
+				return;
+			}
+
 			terminuses[terminusId].counts.fill(0);
 			terminal.show();
 			updateTerminusDisplay(terminusId);
@@ -56,9 +61,9 @@ function initializeTerminusFromTerminal(terminal: Terminal) {
 	});
 }
 
-function releaseTerminus(processId: string) {
-	terminuses[processId].statusBarItem.dispose();
-	delete terminuses[processId];
+function releaseTerminus(terminusId: string) {
+	terminuses[terminusId].statusBarItem.dispose();
+	delete terminuses[terminusId];
 }
 
 function releaseTerminusFromTerminal(terminal: Terminal) {
