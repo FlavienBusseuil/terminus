@@ -52,9 +52,15 @@ function initializeTerminusFromTerminal(terminal: Terminal) {
 				return;
 			}
 
-			terminuses[terminusId].counts.fill(0);
-			terminal.show();
-			updateTerminusDisplay(terminusId);
+			terminal.processId.then((pId) => {
+				if (pId.toString() !== terminusId) {
+					releaseTerminus(terminusId);
+					return;
+				}
+				terminuses[terminusId].counts.fill(0);
+				terminal.show();
+				updateTerminusDisplay(terminusId);
+			});
 		});
 		updateTerminusDisplay(terminusId);
 		watchTerminus(terminusId);
