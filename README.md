@@ -1,11 +1,29 @@
 # terminus
 
-A Terminal Status
+Shows terminal's status
 
 ## Features
 
-## Requirements
-
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+TBD...
 
 ## Extension Settings
+
+The default ones:
+
+```
+"terminus.matches": [
+		{
+			"display": "✕",
+			"expression": "[Ee]rror|[Ee]xception"
+		},
+		{
+			"display": "⚠︎",
+			"expression": "[Ww]arning"
+		},
+		{
+			"display": "↻",
+			"expression": "[Rr]efresh(ing|ed){0,1}|[Rr]estart(ing|ed){0,1}|[Ss]tarted|[Rr]unning"
+		}
+	]
+}
+```
