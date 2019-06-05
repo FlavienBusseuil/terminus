@@ -126,7 +126,7 @@ function updateTerminusDisplay(terminusId: string) {
 		.filter(({ count }) => count > 0)
 		.map(({ display, count }) => `${display} ${count}`)
 		.join(" ");
-	const suffix = isLoading ? "⧖" : "";
+	const suffix = isLoading ? "$(watch)" : "";
 	statusBarItem.text = [prefix, body, suffix].filter((s) => s !== "").join(" ");
 }
 

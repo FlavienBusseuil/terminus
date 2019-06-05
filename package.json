@@ -2,9 +2,10 @@
 	"name": "terminus",
 	"displayName": "terminus",
 	"description": "Terminal Status",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"publisher": "flavienbusseuil",
 	"repository": "https://github.com/FlavienBusseuil/terminus",
+	"license": "MIT",
 	"engines": {
 		"vscode": "^1.31.1"
 	},
@@ -24,15 +25,15 @@
 					"type": "array",
 					"default": [
 						{
-							"display": "✕",
+							"display": "$(error)",
 							"expression": "[Ee]rror|[Ee]xception"
 						},
 						{
-							"display": "⚠︎",
+							"display": "$(alert)",
 							"expression": "[Ww]arning"
 						},
 						{
-							"display": "↻",
+							"display": "$(sync)",
 							"expression": "[Rr]efresh(ing|ed){0,1}|[Rr]estart(ing|ed){0,1}|[Ss]tarted|[Rr]unning"
 						}
 					],
@@ -46,7 +47,8 @@
 		"compile": "tsc -p ./",
 		"watch": "tsc -watch -p ./",
 		"postinstall": "node ./node_modules/vscode/bin/install",
-		"test": "npm run compile && node ./node_modules/vscode/bin/test"
+		"test": "npm run compile && node ./node_modules/vscode/bin/test",
+		"package": "vsce package"
 	},
 	"devDependencies": {
 		"@types/mocha": "^5.2.6",
