@@ -13,15 +13,15 @@ The default ones:
 ```
 "terminus.matches": [
 		{
-			"display": "✕",
+			"display": "$(error)",
 			"expression": "[Ee]rror|[Ee]xception"
 		},
 		{
-			"display": "⚠︎",
+			"display": "$(alert)",
 			"expression": "[Ww]arning"
 		},
 		{
-			"display": "↻",
+			"display": "$(sync)",
 			"expression": "[Rr]efresh(ing|ed){0,1}|[Rr]estart(ing|ed){0,1}|[Ss]tarted|[Rr]unning"
 		}
 	]
