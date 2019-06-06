@@ -6,6 +6,12 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.1.1] - 2019-06-06
+
+### Fixed
+
+-   Core Refactor. Should fix crashes issues
+
 ## [0.1.0] - 2019-06-05
 
 ### Changed
