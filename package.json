@@ -2,7 +2,7 @@
 	"name": "terminus",
 	"displayName": "terminus",
 	"description": "Terminal Status",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"publisher": "flavienbusseuil",
 	"repository": "https://github.com/FlavienBusseuil/terminus",
 	"license": "MIT",

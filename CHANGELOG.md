@@ -6,6 +6,12 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.1.2] - 2019-06-11
+
+### Fixed
+
+-   Fix duplicated terminus
+
 ## [0.1.1] - 2019-06-06
 
 ### Fixed

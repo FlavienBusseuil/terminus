@@ -9,6 +9,11 @@ let EXTENTION_CONTEXT: ExtensionContext;
 const terminuses: Map<Terminal, Terminus> = new Map();
 
 function initializeTerminusFromTerminal(terminal: Terminal) {
+	// ytho?
+	if (terminuses.has(terminal)) {
+		releaseTerminusFromTerminal(terminal);
+	}
+
 	const terminusPriority = -terminuses.size - 1;
 	const terminus = new Terminus(terminal, terminusPriority);
 	terminuses.set(terminal, terminus);
@@ -23,7 +28,7 @@ function releaseTerminusFromTerminal(terminal: Terminal) {
 	terminuses.delete(terminal);
 }
 
-function setMatches() {
+function initializeMatches() {
 	matches.splice(0, matches.length);
 	matches.push(
 		...(workspace
@@ -36,13 +41,16 @@ function setMatches() {
 // your extension is activated the very first time the command is executed
 export function activate(context: ExtensionContext) {
 	EXTENTION_CONTEXT = context;
-	setMatches();
+	initializeMatches();
 	window.terminals.forEach((terminal) => initializeTerminusFromTerminal(terminal));
 	window.onDidOpenTerminal((terminal) => initializeTerminusFromTerminal(terminal));
 	window.onDidCloseTerminal((terminal) => releaseTerminusFromTerminal(terminal));
 	workspace.onDidChangeConfiguration(() => {
-		setMatches();
-		window.terminals.forEach((terminal) => initializeTerminusFromTerminal(terminal));
+		initializeMatches();
+		window.terminals.forEach((terminal) => {
+			releaseTerminusFromTerminal(terminal);
+			initializeTerminusFromTerminal(terminal);
+		});
 	});
 }
 
