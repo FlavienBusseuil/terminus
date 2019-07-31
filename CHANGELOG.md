@@ -6,6 +6,14 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.1.3] - 2019-07-15
+
+### Misc
+
+-   Icon
+-   README
+-   Packages
+
 ## [0.1.2] - 2019-06-11
 
 ### Fixed
