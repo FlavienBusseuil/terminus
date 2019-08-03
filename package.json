@@ -20,6 +20,16 @@
 	"categories": [
 		"Other"
 	],
+	"keywords": [
+		"terminal",
+		"regexp",
+		"parse",
+		"status",
+		"console"
+	],
+	"galleryBanner": {
+		"theme": "dark"
+	},
 	"activationEvents": [
 		"*"
 	],
