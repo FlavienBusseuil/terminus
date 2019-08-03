@@ -2,11 +2,12 @@
 
 Shows terminal's status
 
-## Features
+## Feature
 
-Terminus gives the opportunity to parse integrated terminals outputs with regexp to show some custom status in the status bar.
+Parse integrated terminals output with regexp and show custom status in the status bar for each terminal.
+Works fine with Tasks too.
 
-![alt terminus](terminus.gif)
+![alt terminus](https://github.com/FlavienBusseuil/terminus/raw/master/terminus.gif)
 
 ## Extension Settings
 
