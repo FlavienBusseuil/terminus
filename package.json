@@ -2,7 +2,7 @@
 	"name": "terminus",
 	"displayName": "Terminus",
 	"description": "Terminal Status",
-	"version": "0.1.3",
+	"version": "0.1.4",
 	"publisher": "flavienbusseuil",
 	"repository": {
 		"type": "git",
@@ -28,6 +28,7 @@
 		"console"
 	],
 	"galleryBanner": {
+		"color": "#454545",
 		"theme": "dark"
 	},
 	"activationEvents": [

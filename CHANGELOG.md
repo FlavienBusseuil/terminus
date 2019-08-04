@@ -1,10 +1,10 @@
 # Change Log
 
-All notable changes to the "terminus" extension will be documented in this file.
+## [0.1.4] - 2019-08-03
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+### Misc
 
-## [Unreleased]
+-   Change Marketplace background color
 
 ## [0.1.3] - 2019-07-15
 
