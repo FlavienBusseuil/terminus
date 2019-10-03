@@ -5,7 +5,10 @@ Shows terminal's status
 ## Feature
 
 Parse integrated terminals output with regexp and show custom status in the status bar for each terminal.
-Works fine with Tasks too.
+
+Counts the number of matches. Click on the status bar item to open the corresponding terminal and reset counter.
+
+Terminus works great with Tasks.
 
 ![alt terminus](https://github.com/FlavienBusseuil/terminus/raw/master/terminus.gif)
 

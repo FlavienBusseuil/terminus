@@ -9,6 +9,7 @@ export class Terminus {
 	private isLoading: boolean = false;
 	private statusBarItem: StatusBarItem;
 	private terminal: Terminal;
+	private lastTerminalInput: Date = new Date();
 
 	constructor(terminal: Terminal, statusBarPriority: number) {
 		this.terminal = terminal;
@@ -27,19 +28,21 @@ export class Terminus {
 
 		this.updateDisplay();
 
-		this.terminal.onDidWriteData((data: string) => {
-			const counts = this.parse(data);
+		window.onDidWriteTerminalData((event) => {
+			const counts = this.parse(event.data);
 			counts.forEach((count, i) => {
 				this.countMatches[i] += count;
 			});
-			if (!this.isLoading) {
-				this.isLoading = true;
-				this.updateDisplay();
-				setTimeout(() => {
+			this.lastTerminalInput = new Date();
+			this.isLoading = true;
+			this.updateDisplay();
+			setTimeout(() => {
+				const nowMs = (new Date()).getTime();
+				if (nowMs - this.lastTerminalInput.getTime() > 500) {
 					this.isLoading = false;
 					this.updateDisplay();
-				}, 500);
-			}
+				}
+			}, 500);
 		});
 	}
 
@@ -52,14 +55,14 @@ export class Terminus {
 	}
 
 	private updateDisplay() {
-		const prefix = `${this.terminal.name}`;
+		const icon = this.isLoading ? "$(clock)" : "$(terminal)";
+		const name = `${this.terminal.name}`;
 		const body = matches
 			.map(({ display }, i) => ({ display, countMatch: this.countMatches[i] }))
 			.filter(({ countMatch }) => countMatch > 0)
 			.map(({ display, countMatch }) => `${display} ${countMatch}`)
 			.join(" ");
-		const suffix = this.isLoading ? "$(watch)" : "";
-		this.statusBarItem.text = [prefix, body, suffix].filter((s) => s !== "").join(" ");
+		this.statusBarItem.text = [icon, name, body].filter((s) => s !== "").join(" ");
 	}
 
 	private parse(data: string): number[] {
