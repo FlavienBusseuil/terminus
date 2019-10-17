@@ -29,6 +29,10 @@ export class Terminus {
 		this.updateDisplay();
 
 		window.onDidWriteTerminalData((event) => {
+			if (event.terminal.processId !== this.terminal.processId) {
+				return;
+			}
+
 			const counts = this.parse(event.data);
 			counts.forEach((count, i) => {
 				this.countMatches[i] += count;
@@ -37,7 +41,7 @@ export class Terminus {
 			this.isLoading = true;
 			this.updateDisplay();
 			setTimeout(() => {
-				const nowMs = (new Date()).getTime();
+				const nowMs = new Date().getTime();
 				if (nowMs - this.lastTerminalInput.getTime() > 500) {
 					this.isLoading = false;
 					this.updateDisplay();

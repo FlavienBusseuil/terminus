@@ -15,7 +15,7 @@
 		"email": "flavien.busseuil@gmail.com"
 	},
 	"engines": {
-		"vscode": "^1.32.3"
+		"vscode": "^1.39.0"
 	},
 	"categories": [
 		"Other"
@@ -70,13 +70,13 @@
 	},
 	"devDependencies": {
 		"@types/mocha": "^5.2.6",
-		"@types/node": "^11.9.4",
-		"@types/vscode": "^1.37.0",
+		"@types/node": "^12.7.10",
+		"@types/vscode": "^1.39.0",
 		"prettier": "1.16.4",
 		"tslint": "^5.12.1",
 		"tslint-config-prettier": "^1.18.0",
-		"typescript": "^3.3.3",
+		"typescript": "^3.6.3",
 		"vscode-test": "^1.2.0"
 	},
-	"enableProposedAPI": true
+	"enableProposedApi": true
 }
