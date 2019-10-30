@@ -1,22 +1,37 @@
-//
-// Note: This example test is leveraging the Mocha test framework.
-// Please refer to their documentation on https://mochajs.org/ for help.
-//
+import * as path from "path";
+import * as Mocha from "mocha";
+import * as glob from "glob";
 
-// The module 'assert' provides assertion methods from node
-import * as assert from 'assert';
+export function run(): Promise<void> {
+	// Create the mocha test
+	const mocha = new Mocha({
+		ui: "tdd",
+	});
+	mocha.useColors(true);
 
-// You can import and use all API from the 'vscode' module
-// as well as import your extension to test it
-// import * as vscode from 'vscode';
-// import * as myExtension from '../extension';
+	const testsRoot = path.resolve(__dirname, "..");
 
-// Defines a Mocha test suite to group tests of similar kind together
-suite("Extension Tests", function () {
+	return new Promise((c, e) => {
+		glob("**/**.test.js", { cwd: testsRoot }, (err, files) => {
+			if (err) {
+				return e(err);
+			}
 
-    // Defines a Mocha unit test
-    test("Something 1", function() {
-        assert.equal(-1, [1, 2, 3].indexOf(5));
-        assert.equal(-1, [1, 2, 3].indexOf(0));
-    });
-});
+			// Add files to the test suite
+			files.forEach((f) => mocha.addFile(path.resolve(testsRoot, f)));
+
+			try {
+				// Run the mocha test
+				mocha.run((failures) => {
+					if (failures > 0) {
+						e(new Error(`${failures} tests failed.`));
+					} else {
+						c();
+					}
+				});
+			} catch (err) {
+				e(err);
+			}
+		});
+	});
+}
