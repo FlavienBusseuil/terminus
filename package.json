@@ -75,7 +75,7 @@
 		"@types/node": "^11.9.4",
 		"@types/vscode": "^1.37.0",
 		"glob": "^7.1.5",
-		"mocha": "4",
+		"mocha": "10",
 		"prettier": "1.16.4",
 		"tslint": "^5.12.1",
 		"tslint-config-prettier": "^1.18.0",
